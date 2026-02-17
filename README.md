@@ -1,7 +1,23 @@
-# Orion – Minimal KVM Hypervisor 
+# Orion – Minimal KVM Hypervisor
 
-Orion is a lightweight hypervisor  built to understand and experiment with virtualization infrastructure using open-source components.
-The goal of this project is to build a small, production-style virtualization stack step by step, similar in architecture to platforms like Proxmox, oVirt, and OpenStack.
+**Orion** is a lightweight hypervisor project built to understand and experiment with virtualization infrastructure using open-source components.
+
+The goal is to **start with a clean, single-host hypervisor** and gradually evolve it toward a **distributed virtualization platform** similar in architecture to Proxmox, oVirt, or OpenStack.
+
+This project focuses on learning fundamentals first, then layering advanced features in a structured way.
+
+---
+
+## Project Philosophy
+
+Instead of starting with a complex cluster, Orion follows this progression:
+
+1. Build a reliable **single-node hypervisor**
+2. Understand storage, networking, and VM lifecycle deeply
+3. Introduce shared storage and advanced networking
+4. Expand toward a **multi-node distributed system**
+
+This mirrors how real infrastructure is designed and deployed.
 
 ---
 
@@ -9,42 +25,58 @@ The goal of this project is to build a small, production-style virtualization st
 
 * Build a minimal hypervisor from scratch
 * Understand KVM, QEMU, and libvirt internals
-* Implement storage using Btrfs and NFS
-* Build software-defined networking using Open vSwitch and OVN
+* Implement local storage using Btrfs
+* Learn VM lifecycle and automation workflows
+* Add bridge networking and Open vSwitch
+* Introduce shared storage and clustering concepts later
 * Document each step for reproducibility and learning
 
 ---
 
-## Architecture Overview
+## Architecture Overview (Current Phase)
 
 Hardware
 → Proxmox (Test Bench / Nested Virtualization)
-→ Debian Hypervisor (Orion)
+→ Debian Hypervisor (Orion – Single Node)
 → Guest Virtual Machines
+
+Future Architecture:
+
+Multiple Hypervisor Nodes
+→ Shared Storage
+→ Overlay Networking
+→ Distributed VM Management
 
 ---
 
 ## Technology Stack
 
-**Hypervisor**
+### Hypervisor
 
 * KVM
 * QEMU
 * libvirt
 * virsh
 
-**Storage**
+### Storage (Phase 1 – Single Node)
 
 * Btrfs (local storage)
-* NFS (shared storage – planned)
 
-**Networking**
+### Storage (Future)
 
-* Linux bridge (initial)
-* Open vSwitch (planned)
-* OVN (planned)
+* NFS
+* Distributed storage (Ceph – experimental phase)
 
-**Management Tools**
+### Networking (Phase 1)
+
+* Linux bridge
+
+### Networking (Future)
+
+* Open vSwitch
+* OVN
+
+### Management Tools
 
 * virt-install
 * virsh
@@ -56,7 +88,7 @@ Hardware
 
 * Debian 12 (Minimal Installation)
 
-Reason:
+Reasons:
 
 * Stable kernel
 * Excellent libvirt and KVM support
@@ -135,7 +167,7 @@ mkdir /vmstore
 mount /dev/sdb /vmstore
 ```
 
-Add to `/etc/fstab`.
+Persist mount in `/etc/fstab`.
 
 Create storage pool:
 
@@ -163,12 +195,13 @@ virt-install \
 --name testvm \
 --ram 1024 \
 --vcpus 1 \
---disk pool=vmstore,size=10 \
---os-variant generic \
---network network=default \
---graphics none \
---console pty,target_type=serial \
---cdrom /path/to.iso
+--disk pool=vmstore,size=10,bus=virtio \
+--network network=default,model=virtio \
+--os-variant rocky9 \
+--graphics vnc \
+--boot cdrom,hd \
+--cdrom /path/to.iso \
+--noautoconsole
 ```
 
 ---
@@ -186,28 +219,41 @@ Recommended structure:
 
 ---
 
-## Current Status
+## Current Status (Phase 1 – Single Host)
 
 * [x] Minimal OS installed
 * [x] KVM and libvirt configured
 * [x] Nested virtualization working
 * [x] Btrfs storage configured
 * [x] Default network enabled
+* [x] VM creation workflow validated
 * [ ] Bridge networking
+* [ ] VM templates and cloud-init
 * [ ] NFS storage
 * [ ] Open vSwitch
-* [ ] OVN networking
-* [ ] Automation and templates
 
 ---
 
-## Future Enhancements
+## Roadmap
 
-* Cloud-init templates
-* Automated VM provisioning
-* Multi-node clustering
-* Monitoring and metrics
-* Infrastructure as Code (Terraform / Ansible)
+### Phase 1 – Single Node (Current Focus)
+
+* Reliable hypervisor setup
+* Storage and networking fundamentals
+* VM templates and automation
+
+### Phase 2 – Advanced Features
+
+* Bridge networking
+* Open vSwitch
+* Performance tuning
+
+### Phase 3 – Distributed System
+
+* Shared storage
+* Multi-node orchestration
+* Overlay networking (OVN)
+* High availability concepts
 
 ---
 
@@ -217,9 +263,10 @@ This project focuses on understanding:
 
 * Linux virtualization internals
 * Storage backends and performance
-* Software-defined networking
+* Virtual networking concepts
 * Hypervisor architecture
-* Troubleshooting real-world setups
+* Real-world troubleshooting workflows
+* Gradual evolution toward distributed infrastructure
 
 ---
 
@@ -232,4 +279,4 @@ MIT License
 ## Author
 
 Manoj Kumar
-Orion Hypervisor 
+Orion Hypervisor Project
