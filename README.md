@@ -1,6 +1,6 @@
-# Orion – Minimal KVM Hypervisor Lab
+# Orion – Minimal KVM Hypervisor 
 
-Orion is a lightweight hypervisor lab built to understand and experiment with virtualization infrastructure using open-source components.
+Orion is a lightweight hypervisor  built to understand and experiment with virtualization infrastructure using open-source components.
 The goal of this project is to build a small, production-style virtualization stack step by step, similar in architecture to platforms like Proxmox, oVirt, and OpenStack.
 
 ---
@@ -232,4 +232,4 @@ MIT License
 ## Author
 
 Manoj Kumar
-Orion Hypervisor Lab
+Orion Hypervisor 
